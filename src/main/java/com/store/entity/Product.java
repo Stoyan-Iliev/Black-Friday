@@ -1,14 +1,43 @@
 package com.store.entity;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 
+@Entity(name = "products")
 public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column
+    @Size(min = 3, max = 255)
+    @NotNull
     private String name;
+
+    @Column
+    @Size(min = 3, max = 255)
+    @NotNull
     private String type;
+
+    @Column
+    @NotNull
     private int count;
-    private double price;
-    private double minPrice;
+
+    @Column
+    @NotNull
+    private BigDecimal price;
+
+    @Column
+    @NotNull
+    private BigDecimal minPrice;
+
+    @Column
+    @NotNull
     private boolean isOnSale;
+
+    @Column
     private double discountPercent;
 
     public String getName() {
@@ -35,19 +64,19 @@ public class Product {
         this.count = count;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public double getMinPrice() {
+    public BigDecimal getMinPrice() {
         return minPrice;
     }
 
-    public void setMinPrice(double minPrice) {
+    public void setMinPrice(BigDecimal minPrice) {
         this.minPrice = minPrice;
     }
 

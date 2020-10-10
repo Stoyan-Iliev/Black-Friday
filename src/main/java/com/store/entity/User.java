@@ -1,13 +1,44 @@
 package com.store.entity;
 
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Entity
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column
+    @NotNull
+    @Size(min = 3, max = 255)
     private String firstName;
+
+    @Column
+    @NotNull
+    @Size(min = 3, max = 255)
     private String lastName;
+
+    @Column
+    @NotNull
+    @Size(min = 3, max = 255)
     private String username;
+
+    @Column
+    @NotNull
+    @Size(min = 6, max = 35)
     private String password;
+
+    @Column
+    @NotNull
+    @Email
     private String email;
-    private boolean isEmployee;
+
+    @Column
+    @NotNull
+    private boolean isClient;
 
     public String getFirstName() {
         return firstName;
@@ -49,11 +80,11 @@ public class User {
         this.email = email;
     }
 
-    public boolean isEmployee() {
-        return isEmployee;
+    public boolean isClient() {
+        return isClient;
     }
 
-    public void setEmployee(boolean employee) {
-        isEmployee = employee;
+    public void setClient(boolean client) {
+        isClient = client;
     }
 }
