@@ -1,6 +1,7 @@
 package com.store.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -11,33 +12,35 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
-    @Size(min = 3, max = 255)
-    @NotNull
+    @Column(name = "name")
+    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters long")
+    @NotNull(message = "Name must not be empty")
     private String name;
 
-    @Column
-    @Size(min = 3, max = 255)
-    @NotNull
+    @Column(name = "type")
+    @Size(min = 3, max = 255, message = "Type must be between 3 and 255 characters long")
+    @NotNull(message = "Type must not be null")
     private String type;
 
-    @Column
-    @NotNull
+    @Column(name = "count")
+    @Min(value = 0, message = "Count must be greater or equal to zero")
     private int count;
 
-    @Column
-    @NotNull
+    @Column(name = "price")
+    @NotNull(message = "Price must not be null")
+    @Min(value = 0, message = "Price must be greater than zero")
     private BigDecimal price;
 
-    @Column
-    @NotNull
+    @Column(name = "minPrice")
+    @NotNull(message = "Minimal price must not be null")
+    @Min(value = 0, message = "Minimal price must be greater than zero")
     private BigDecimal minPrice;
 
-    @Column
-    @NotNull
+    @Column(name = "isOnSale")
     private boolean isOnSale;
 
-    @Column
+    @Column(name = "discountPercent")
+    @Min(value = 0, message = "Discount percent must be greater or equal to zero")
     private double discountPercent;
 
     public String getName() {
@@ -84,8 +87,8 @@ public class Product {
         return isOnSale;
     }
 
-    public void setOnSale(boolean onSale) {
-        isOnSale = onSale;
+    public void setIsOnSale(boolean isOnSale) {
+        this.isOnSale = isOnSale;
     }
 
     public double getDiscountPercent() {
