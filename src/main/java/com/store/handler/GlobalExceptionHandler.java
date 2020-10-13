@@ -23,6 +23,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ConstraintViolationException.class)
     public ResponseEntity<?> constraintExceptionHandler(ConstraintViolationException exception) {
+        LOGGER.error(exception);
         String message = concatViolationMessages(exception);
         return new ResponseEntity<>(getApiError(message, BAD_REQUEST), BAD_REQUEST);
     }
