@@ -5,39 +5,39 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity(name = "users")
+@Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column
-    //@NotBlack
-    //@Size(min = 3, max = 255)
+    @NotNull
+    @Size(min = 3, max = 255)
     private String firstName;
 
     @Column
-    //@NotBlack
-    //@Size(min = 3, max = 255)
+    @NotNull
+    @Size(min = 3, max = 255)
     private String lastName;
 
     @Column
-    //@NotBlack
-    //@Size(min = 3, max = 255)
+    @NotNull
+    @Size(min = 3, max = 255)
     private String username;
 
     @Column
-    //@NotBlack
-    //@Size(min = 6, max = 35)
+    @NotNull
+    @Size(min = 6, max = 35)
     private String password;
 
     @Column
-    //@NotBlack
+    @NotNull
     @Email
     private String email;
 
     @Column
-    //@NotBlack
+    @NotNull
     private boolean isClient;
 
     public String getFirstName() {
