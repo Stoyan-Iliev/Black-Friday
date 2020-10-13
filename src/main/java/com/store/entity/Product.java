@@ -1,7 +1,8 @@
 package com.store.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
@@ -12,32 +13,34 @@ public class Product {
     private long id;
 
     @Column(name = "name")
-    //@Size(min = 3, max = 255)
-    //@NotEmpty
+    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters long")
+    @NotNull(message = "Name must not be empty")
     private String name;
 
     @Column(name = "type")
-    //@Size(min = 3, max = 255)
-    //@NotEmpty
+    @Size(min = 3, max = 255, message = "Type must be between 3 and 255 characters long")
+    @NotNull(message = "Type must not be null")
     private String type;
 
     @Column(name = "count")
-    //@NotEmpty
+    @Min(value = 0, message = "Count must be greater or equal to zero")
     private int count;
 
     @Column(name = "price")
-    //@NotEmpty
+    @NotNull(message = "Price must not be null")
+    @Min(value = 0, message = "Price must be greater than zero")
     private BigDecimal price;
 
     @Column(name = "minPrice")
-    //@NotEmpty
+    @NotNull(message = "Minimal price must not be null")
+    @Min(value = 0, message = "Minimal price must be greater than zero")
     private BigDecimal minPrice;
 
     @Column(name = "isOnSale")
-    //@NotEmpty
     private boolean isOnSale;
 
     @Column(name = "discountPercent")
+    @Min(value = 0, message = "Discount percent must be greater or equal to zero")
     private double discountPercent;
 
     public String getName() {
