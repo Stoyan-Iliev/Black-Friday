@@ -43,6 +43,14 @@ public class Product {
     @Min(value = 0, message = "Discount percent must be greater or equal to zero")
     private double discountPercent;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
