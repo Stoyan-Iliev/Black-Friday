@@ -87,8 +87,8 @@ public class Product {
         return isOnSale;
     }
 
-    public void setIsOnSale(boolean onSale) {
-        isOnSale = onSale;
+    public void setIsOnSale(boolean isOnSale) {
+        this.isOnSale = isOnSale;
     }
 
     public double getDiscountPercent() {
