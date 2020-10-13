@@ -1,7 +1,7 @@
 package com.store.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
@@ -11,33 +11,33 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
-    @Size(min = 3, max = 255)
-    @NotNull
+    @Column(name = "name")
+    //@Size(min = 3, max = 255)
+    //@NotEmpty
     private String name;
 
-    @Column
-    @Size(min = 3, max = 255)
-    @NotNull
+    @Column(name = "type")
+    //@Size(min = 3, max = 255)
+    //@NotEmpty
     private String type;
 
-    @Column
-    @NotNull
+    @Column(name = "count")
+    //@NotEmpty
     private int count;
 
-    @Column
-    @NotNull
+    @Column(name = "price")
+    //@NotEmpty
     private BigDecimal price;
 
-    @Column
-    @NotNull
+    @Column(name = "minPrice")
+    //@NotEmpty
     private BigDecimal minPrice;
 
-    @Column
-    @NotNull
+    @Column(name = "isOnSale")
+    //@NotEmpty
     private boolean isOnSale;
 
-    @Column
+    @Column(name = "discountPercent")
     private double discountPercent;
 
     public String getName() {
@@ -84,7 +84,7 @@ public class Product {
         return isOnSale;
     }
 
-    public void setOnSale(boolean onSale) {
+    public void setIsOnSale(boolean onSale) {
         isOnSale = onSale;
     }
 

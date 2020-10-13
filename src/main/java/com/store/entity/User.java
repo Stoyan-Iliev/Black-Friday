@@ -12,32 +12,32 @@ public class User {
     private long id;
 
     @Column
-    @NotNull
-    @Size(min = 3, max = 255)
+    //@NotBlack
+    //@Size(min = 3, max = 255)
     private String firstName;
 
     @Column
-    @NotNull
-    @Size(min = 3, max = 255)
+    //@NotBlack
+    //@Size(min = 3, max = 255)
     private String lastName;
 
     @Column
-    @NotNull
-    @Size(min = 3, max = 255)
+    //@NotBlack
+    //@Size(min = 3, max = 255)
     private String username;
 
     @Column
-    @NotNull
-    @Size(min = 6, max = 35)
+    //@NotBlack
+    //@Size(min = 6, max = 35)
     private String password;
 
     @Column
-    @NotNull
+    //@NotBlack
     @Email
     private String email;
 
     @Column
-    @NotNull
+    //@NotBlack
     private boolean isClient;
 
     public String getFirstName() {
