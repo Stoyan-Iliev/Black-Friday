@@ -2,6 +2,8 @@ package com.store.handler;
 
 import com.store.exception.ProductNotFoundException;
 import com.store.util.ApiError;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,9 +19,11 @@ import static org.springframework.http.HttpStatus.*;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final String DELIMITER = ";" + System.lineSeparator();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @ExceptionHandler(value = ConstraintViolationException.class)
     public ResponseEntity<?> constraintExceptionHandler(ConstraintViolationException exception) {
+        LOGGER.error(exception);
         String message = concatViolationMessages(exception);
         return new ResponseEntity<>(getApiError(message, BAD_REQUEST), BAD_REQUEST);
     }
@@ -41,6 +45,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ProductNotFoundException.class)
     public ResponseEntity<?> noSuchElementExceptionHandler(ProductNotFoundException exception){
+        LOGGER.error(exception);
         return new ResponseEntity<>(getApiError(exception.getMessage(), BAD_REQUEST), BAD_REQUEST);
     }
 }
