@@ -1,6 +1,7 @@
 package com.store.service;
 
 import com.store.entity.Product;
+import com.store.exception.ProductNotFoundException;
 import com.store.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,5 +84,16 @@ public class ProductService {
     private BigDecimal getDiscountSum(Product product) {
         return product.getPrice()
                 .multiply(BigDecimal.valueOf(product.getDiscountPercent() / 100));
+    }
+
+    public Product getProductById(long id) throws ProductNotFoundException {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product with id = " + id + " does not exist"));
+    }
+
+    public Product updateProduct(long id, Product product) {
+        getProductById(id);
+        product.setId(id);
+        return productRepository.save(product);
     }
 }
