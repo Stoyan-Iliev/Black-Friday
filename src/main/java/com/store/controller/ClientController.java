@@ -15,7 +15,7 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 
 @RestController
-@RequestMapping(path = "/black-friday/products")
+@RequestMapping(path = "/blackFriday")
 public class ClientController {
 
     private ProductService productService;
@@ -25,30 +25,43 @@ public class ClientController {
         this.productService = productService;
     }
 
-    @GetMapping(path = "/all-products", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/products", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Product>> getAllProducts(){
         return ResponseEntity.status(OK)
                 .body(productService.getAllProducts());
     }
 
-    @GetMapping(path = "/all-products-on-sale", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/products/onSale", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Product>> getAllProductsOnSale(){
         return ResponseEntity.status(OK)
                 .body(productService.getAllProductsOnSale());
     }
 
-    @PostMapping(consumes = APPLICATION_JSON_VALUE,
+    @GetMapping(path = "/product/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable("id") long id){
+        return ResponseEntity.status(OK).body(productService.getProductById(id));
+    }
+
+    @PostMapping(path = "/product", consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Product> addProduct(@RequestBody Product product){
         return ResponseEntity.status(CREATED)
                 .body(productService.addProduct(product));
     }
 
-    @PostMapping(path = "add-products",
+    @PostMapping(path = "/products",
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Product>> addProducts(@RequestBody List<Product> products){
         return ResponseEntity.status(CREATED)
                 .body(productService.addProducts(products));
     }
+
+    @PutMapping(path = "/product/{id}", consumes = APPLICATION_JSON_VALUE,
+    produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Product> updateProduct(@PathVariable("id") long id, @RequestBody Product product){
+        return ResponseEntity.status(OK).body(productService.updateProduct(id, product));
+    }
+
+
 }
