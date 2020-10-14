@@ -1,6 +1,7 @@
 package com.store.handler;
 
 import com.store.exception.ProductNotFoundException;
+import com.store.exception.UserAlreadyExistException;
 import com.store.util.ApiError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +26,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> constraintExceptionHandler(ConstraintViolationException exception) {
         LOGGER.error(exception);
         String message = concatViolationMessages(exception);
-        return new ResponseEntity<>(getApiError(message, BAD_REQUEST), BAD_REQUEST);
+        return ResponseEntity.status(BAD_REQUEST).body(getApiError(message, BAD_REQUEST));
+    }
+
+    @ExceptionHandler(value = ProductNotFoundException.class)
+    public ResponseEntity<?> noSuchElementExceptionHandler(ProductNotFoundException exception){
+        LOGGER.error(exception);
+        return ResponseEntity.status(BAD_REQUEST).body(getApiError(exception.getMessage(), BAD_REQUEST));
+    }
+
+    @ExceptionHandler(value = UserAlreadyExistException.class)
+    public ResponseEntity<?> userAlreadyExistExceptionHandler(UserAlreadyExistException exception){
+        LOGGER.error(exception);
+        return ResponseEntity.status(BAD_REQUEST).body(getApiError(exception.getMessage(), BAD_REQUEST));
     }
 
     private String concatViolationMessages(ConstraintViolationException exception) {
@@ -41,11 +54,5 @@ public class GlobalExceptionHandler {
 
     private ApiError getApiError(String message, HttpStatus status) {
         return new ApiError(status, "validation", message);
-    }
-
-    @ExceptionHandler(value = ProductNotFoundException.class)
-    public ResponseEntity<?> noSuchElementExceptionHandler(ProductNotFoundException exception){
-        LOGGER.error(exception);
-        return new ResponseEntity<>(getApiError(exception.getMessage(), BAD_REQUEST), BAD_REQUEST);
     }
 }
