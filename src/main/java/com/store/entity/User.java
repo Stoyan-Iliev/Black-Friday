@@ -1,5 +1,6 @@
 package com.store.entity;
 
+import com.store.validation.constraint.PasswordMatches;
 import com.store.validation.constraint.ValidPassword;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity(name = "users")
+@PasswordMatches
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +34,7 @@ public class User {
     @NotNull
     @ValidPassword
     private String password;
+    private String matchingPassword;
 
     @Column
     @NotNull
@@ -71,6 +74,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getMatchingPassword() {
+        return matchingPassword;
+    }
+
+    public void setMatchingPassword(String matchingPassword) {
+        this.matchingPassword = matchingPassword;
     }
 
     public String getEmail() {
