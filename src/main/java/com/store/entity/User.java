@@ -1,9 +1,11 @@
 package com.store.entity;
 
+import com.store.validation.constraint.ValidPassword;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity(name = "users")
 public class User {
@@ -13,22 +15,22 @@ public class User {
 
     @Column
     @NotNull
-    @Size(min = 3, max = 255)
+    @NotBlank
     private String firstName;
 
     @Column
     @NotNull
-    @Size(min = 3, max = 255)
+    @NotBlank
     private String lastName;
 
     @Column
     @NotNull
-    @Size(min = 3, max = 255)
+    @NotBlank
     private String username;
 
     @Column
     @NotNull
-    @Size(min = 6, max = 35)
+    @ValidPassword
     private String password;
 
     @Column
@@ -37,8 +39,7 @@ public class User {
     private String email;
 
     @Column
-    @NotNull
-    private boolean isClient;
+    private boolean isEmployee;
 
     public String getFirstName() {
         return firstName;
@@ -80,11 +81,11 @@ public class User {
         this.email = email;
     }
 
-    public boolean isClient() {
-        return isClient;
+    public boolean isEmployee() {
+        return isEmployee;
     }
 
-    public void setClient(boolean client) {
-        isClient = client;
+    public void setEmployee(boolean employee) {
+        isEmployee = employee;
     }
 }
