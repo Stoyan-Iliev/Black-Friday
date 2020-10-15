@@ -28,7 +28,7 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts(){
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.getAllByCountGreaterThan(0);
         setDiscountPriceForAllProductsOnSale(products);
         return products;
     }

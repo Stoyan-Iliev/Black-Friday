@@ -49,6 +49,7 @@ public class GlobalExceptionHandler {
             message.append(violation.getMessage())
                     .append(DELIMITER);
         }
+        message.delete(message.lastIndexOf(DELIMITER), message.length());
         return message.toString();
     }
 

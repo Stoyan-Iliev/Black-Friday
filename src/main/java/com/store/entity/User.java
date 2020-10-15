@@ -1,5 +1,6 @@
 package com.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.store.validation.constraint.PasswordMatches;
 import com.store.validation.constraint.ValidPassword;
 
@@ -34,6 +35,9 @@ public class User {
     @NotNull
     @ValidPassword
     private String password;
+
+    @Transient
+    @JsonProperty(value = "matchingPassword", access = JsonProperty.Access.WRITE_ONLY)
     private String matchingPassword;
 
     @Column
