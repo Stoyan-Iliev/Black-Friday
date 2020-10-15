@@ -35,10 +35,10 @@ public class UserService {
     }
 
     private boolean usernameExist(String username) {
-        return userRepository.getByUsername(username) != null;
+        return userRepository.existsByUsername(username);
     }
 
     private boolean emailExist(String email) {
-        return userRepository.getByEmail(email) != null;
+        return userRepository.existsByEmail(email);
     }
 }
