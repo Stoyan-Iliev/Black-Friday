@@ -2,12 +2,12 @@ package com.store.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.store.validation.constraint.PasswordMatches;
+import com.store.validation.constraint.ValidEmail;
 import com.store.validation.constraint.ValidPassword;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity(name = "users")
 @PasswordMatches
@@ -17,22 +17,18 @@ public class User {
     private long id;
 
     @Column
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "First name must not be blank")
     private String firstName;
 
     @Column
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "Last name must not be blank")
     private String lastName;
 
     @Column
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "Username must not be blank")
     private String username;
 
     @Column
-    @NotNull
     @ValidPassword
     private String password;
 
@@ -41,12 +37,14 @@ public class User {
     private String matchingPassword;
 
     @Column
-    @NotNull
-    @Email
+    @ValidEmail
     private String email;
 
-    @Column
-    private boolean isEmployee;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> role;
 
     public String getFirstName() {
         return firstName;
@@ -96,11 +94,11 @@ public class User {
         this.email = email;
     }
 
-    public boolean isEmployee() {
-        return isEmployee;
+    public Set<Role> getRole() {
+        return role;
     }
 
-    public void setEmployee(boolean employee) {
-        isEmployee = employee;
+    public void setRole(Set<Role> role) {
+        this.role = role;
     }
 }
