@@ -14,7 +14,7 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 
 @RestController
-@RequestMapping(path = "/blackFriday")
+@RequestMapping(path = "/blackFriday/api")
 public class ClientController {
 
     private ProductService productService;

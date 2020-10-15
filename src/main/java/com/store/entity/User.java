@@ -1,16 +1,13 @@
 package com.store.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.store.validation.constraint.PasswordMatches;
 import com.store.validation.constraint.ValidEmail;
-import com.store.validation.constraint.ValidPassword;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Entity(name = "users")
-@PasswordMatches
+//@PasswordMatches
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,12 +26,11 @@ public class User {
     private String username;
 
     @Column
-    @ValidPassword
     private String password;
 
-    @Transient
-    @JsonProperty(value = "matchingPassword", access = JsonProperty.Access.WRITE_ONLY)
-    private String matchingPassword;
+//    @Transient
+//    @JsonProperty(value = "matchingPassword", access = JsonProperty.Access.WRITE_ONLY)
+//    private String matchingPassword;
 
     @Column
     @ValidEmail
@@ -44,7 +40,26 @@ public class User {
     @JoinTable(name = "user_roles",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> role;
+    private Set<Role> roles;
+
+    public User() {
+    }
+
+    public User(String firstName, String lastName, String username, String password, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -78,13 +93,13 @@ public class User {
         this.password = password;
     }
 
-    public String getMatchingPassword() {
-        return matchingPassword;
-    }
-
-    public void setMatchingPassword(String matchingPassword) {
-        this.matchingPassword = matchingPassword;
-    }
+//    public String getMatchingPassword() {
+//        return matchingPassword;
+//    }
+//
+//    public void setMatchingPassword(String matchingPassword) {
+//        this.matchingPassword = matchingPassword;
+//    }
 
     public String getEmail() {
         return email;
@@ -94,11 +109,11 @@ public class User {
         this.email = email;
     }
 
-    public Set<Role> getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Set<Role> role) {
-        this.role = role;
+    public void setRoles(Set<Role> role) {
+        this.roles = role;
     }
 }
