@@ -2,6 +2,7 @@ package com.store.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -13,13 +14,13 @@ public class Product {
     private long id;
 
     @Column(name = "name")
-    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters long")
-    @NotNull(message = "Name must not be empty")
+    @Size(max = 255, message = "Name must be at most 255 characters long")
+    @NotBlank(message = "Name must not be blank")
     private String name;
 
     @Column(name = "type")
-    @Size(min = 3, max = 255, message = "Type must be between 3 and 255 characters long")
-    @NotNull(message = "Type must not be null")
+    @Size(max = 255, message = "Type must be at most 255 characters long")
+    @NotBlank(message = "Type must not be blank")
     private String type;
 
     @Column(name = "count")
@@ -27,12 +28,12 @@ public class Product {
     private int count;
 
     @Column(name = "price")
-    @NotNull(message = "Price must not be null")
+    @NotNull(message = "Price must not be empty")
     @Min(value = 0, message = "Price must be greater than zero")
     private BigDecimal price;
 
     @Column(name = "minPrice")
-    @NotNull(message = "Minimal price must not be null")
+    @NotNull(message = "Minimal price must not be empty")
     @Min(value = 0, message = "Minimal price must be greater than zero")
     private BigDecimal minPrice;
 

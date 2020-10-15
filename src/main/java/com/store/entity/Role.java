@@ -1,0 +1,22 @@
+package com.store.entity;
+
+import javax.persistence.*;
+
+@Entity(name = "roles")
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(length = 20)
+    @Enumerated(value = EnumType.STRING)
+    private ERole name;
+
+    public ERole getName() {
+        return name;
+    }
+
+    public void setName(ERole name) {
+        this.name = name;
+    }
+}
