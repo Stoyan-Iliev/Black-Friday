@@ -7,29 +7,25 @@ import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Entity(name = "users")
+//@UniqueConstraint(columnNames = {"email, "first_name"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
-    @NotBlank(message = "First name must not be blank")
+    @Column(nullable = false)
     private String firstName;
 
-    @Column
-    @NotBlank(message = "Last name must not be blank")
+    @Column(nullable = false)
     private String lastName;
 
-    @Column
-    @NotBlank(message = "Username must not be blank")
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
-    @Column
-    @NotBlank(message = "Email must not be blank")
-    @ValidEmail
+    @Column(unique = true, nullable = false)
     private String email;
 
     @ManyToMany(fetch = FetchType.LAZY)
