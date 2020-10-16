@@ -90,14 +90,6 @@ public class User {
         this.password = password;
     }
 
-//    public String getMatchingPassword() {
-//        return matchingPassword;
-//    }
-//
-//    public void setMatchingPassword(String matchingPassword) {
-//        this.matchingPassword = matchingPassword;
-//    }
-
     public String getEmail() {
         return email;
     }
