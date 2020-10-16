@@ -27,7 +27,6 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LogManager.getLogger(AuthenticationTokenFilter.class);
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

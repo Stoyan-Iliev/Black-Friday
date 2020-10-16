@@ -4,10 +4,10 @@ import com.store.validation.constraint.ValidEmail;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "users")
-//@PasswordMatches
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +28,8 @@ public class User {
     @Column
     private String password;
 
-//    @Transient
-//    @JsonProperty(value = "matchingPassword", access = JsonProperty.Access.WRITE_ONLY)
-//    private String matchingPassword;
-
     @Column
+    @NotBlank(message = "Email must not be blank")
     @ValidEmail
     private String email;
 

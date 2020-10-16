@@ -5,7 +5,6 @@ import com.store.validation.constraint.PasswordMatches;
 import com.store.validation.constraint.ValidEmail;
 import com.store.validation.constraint.ValidPassword;
 
-import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
@@ -21,17 +20,18 @@ public class SignUpRequest {
     @NotBlank(message = "Username must not be blank")
     private String username;
 
+    @NotBlank(message = "Password must not be blank")
     @ValidPassword
     private String password;
 
-    @Transient
     @JsonProperty(value = "matchingPassword", access = JsonProperty.Access.WRITE_ONLY)
     private String matchingPassword;
 
+    @NotBlank(message = "Email must not be blank")
     @ValidEmail
     private String email;
 
-    private Set<String> role;
+    private Set<String> roles;
 
     public String getFirstName() {
         return firstName;
@@ -73,12 +73,12 @@ public class SignUpRequest {
         this.email = email;
     }
 
-    public Set<String> getRole() {
-        return role;
+    public Set<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(Set<String> role) {
-        this.role = role;
+    public void setRoles(Set<String> role) {
+        this.roles = role;
     }
 
     public String getPassword() {

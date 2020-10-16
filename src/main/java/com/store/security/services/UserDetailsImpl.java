@@ -15,10 +15,6 @@ public class UserDetailsImpl implements UserDetails {
 
     private long id;
 
-    private String firstName;
-
-    private String lastName;
-
     private String username;
 
     private String email;
@@ -57,14 +53,6 @@ public class UserDetailsImpl implements UserDetails {
 
     public Long getId(){
         return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
     }
 
     public String getEmail(){

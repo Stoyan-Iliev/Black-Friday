@@ -1,50 +1,56 @@
 package com.store.controller;
 
 import com.store.entity.Product;
-import com.store.entity.User;
+import com.store.payload.request.SignUpRequest;
+import com.store.payload.response.MessageResponse;
 import com.store.service.ProductService;
-import com.store.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/blackFriday/api")
-public class ClientController {
+public class ProductController {
 
     private ProductService productService;
-    private UserService userService;
 
     @Autowired
-    public ClientController(ProductService productService, UserService userService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.userService = userService;
     }
 
     @GetMapping(path = "/products", produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CLIENT', 'ADMIN')")
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.status(OK)
                 .body(productService.getAllProducts());
     }
 
     @GetMapping(path = "/products/onSale", produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CLIENT', 'ADMIN')")
     public ResponseEntity<List<Product>> getAllProductsOnSale() {
         return ResponseEntity.status(OK)
                 .body(productService.getAllProductsOnSale());
     }
 
     @GetMapping(path = "/product/{id}")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CLIENT', 'ADMIN')")
     public ResponseEntity<Product> getProductById(@PathVariable("id") long id) {
         return ResponseEntity.status(OK).body(productService.getProductById(id));
     }
 
     @PostMapping(path = "/product", consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         return ResponseEntity.status(CREATED)
                 .body(productService.addProduct(product));
@@ -53,6 +59,7 @@ public class ClientController {
     @PostMapping(path = "/products",
             consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<List<Product>> addProducts(@RequestBody List<Product> products) {
         return ResponseEntity.status(CREATED)
                 .body(productService.addProducts(products));
@@ -60,14 +67,10 @@ public class ClientController {
 
     @PutMapping(path = "/product/{id}", consumes = APPLICATION_JSON_VALUE,
             produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<Product> updateProduct(@PathVariable("id") long id, @RequestBody Product product) {
         return ResponseEntity.status(OK).body(productService.updateProduct(id, product));
     }
 
-    @PostMapping(path = "/register",
-            consumes = APPLICATION_JSON_VALUE,
-            produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> registerNewUser(@RequestBody User user){
-        return ResponseEntity.status(OK).body(userService.registerNewUserAccount(user));
-    }
+
 }
