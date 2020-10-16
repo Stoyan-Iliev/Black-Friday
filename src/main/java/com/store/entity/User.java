@@ -1,13 +1,9 @@
 package com.store.entity;
 
-import com.store.validation.constraint.ValidEmail;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Entity(name = "users")
-//@UniqueConstraint(columnNames = {"email, "first_name"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
