@@ -12,6 +12,13 @@ public class Role {
     @Enumerated(value = EnumType.STRING)
     private ERole name;
 
+    public Role() {
+    }
+
+    public Role(ERole name){
+        this.name = name;
+    }
+
     public ERole getName() {
         return name;
     }
