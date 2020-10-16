@@ -4,7 +4,6 @@ import com.store.validation.constraint.ValidEmail;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "users")
