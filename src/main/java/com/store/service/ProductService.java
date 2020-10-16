@@ -19,28 +19,28 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Product addProduct(Product product){
+    public Product addProduct(Product product) {
         return productRepository.save(product);
     }
 
-    public List<Product> addProducts(List<Product> products){
+    public List<Product> addProducts(List<Product> products) {
         return productRepository.saveAll(products);
     }
 
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
         List<Product> products = productRepository.getAllByCountGreaterThan(0);
         setDiscountPriceForAllProductsOnSale(products);
         return products;
     }
 
-    public List<Product> getAllProductsOnSale(){
+    public List<Product> getAllProductsOnSale() {
         List<Product> products = productRepository.getAllByIsOnSaleIsTrue();
         setDiscountPriceForAllProductsOnSale(products);
         return products;
     }
 
     private void setDiscountPriceForAllProductsOnSale(List<Product> products) {
-        if(isNull(products)){
+        if (isNull(products)) {
             return;
         }
 
@@ -54,7 +54,7 @@ public class ProductService {
     }
 
     private void setNewPriceIfNeeded(Product product) {
-        if(product.isOnSale()){
+        if (product.isOnSale()) {
             product.setPrice(calculateNewPrice(product));
         }
     }
@@ -66,7 +66,7 @@ public class ProductService {
     }
 
     private BigDecimal ensurePriceIsNotBelowMinPrice(Product product, BigDecimal newPrice) {
-        if(isNewPricePriceLessThanMinPrice(newPrice, product.getMinPrice())){
+        if (isNewPricePriceLessThanMinPrice(newPrice, product.getMinPrice())) {
             newPrice = product.getMinPrice();
         }
         return newPrice;
