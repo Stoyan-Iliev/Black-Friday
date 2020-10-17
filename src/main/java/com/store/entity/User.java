@@ -1,10 +1,6 @@
 package com.store.entity;
 
-import com.store.validation.constraint.ValidEmail;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "users")
@@ -13,24 +9,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
-    @NotBlank(message = "First name must not be blank")
+    @Column(nullable = false)
     private String firstName;
 
-    @Column
-    @NotBlank(message = "Last name must not be blank")
+    @Column(nullable = false)
     private String lastName;
 
-    @Column
-    @NotBlank(message = "Username must not be blank")
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
-    @Column
-    @NotBlank(message = "Email must not be blank")
-    @ValidEmail
+    @Column(unique = true, nullable = false)
     private String email;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -89,14 +80,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-//    public String getMatchingPassword() {
-//        return matchingPassword;
-//    }
-//
-//    public void setMatchingPassword(String matchingPassword) {
-//        this.matchingPassword = matchingPassword;
-//    }
 
     public String getEmail() {
         return email;

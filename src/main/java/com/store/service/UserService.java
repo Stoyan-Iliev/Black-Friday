@@ -26,15 +26,18 @@ public class UserService {
     }
 
     public void upgradeUser(UpgradeRequest upgradeRequest) {
-        User user = userRepository.findByUsername(upgradeRequest.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("There is no user with username: " +
-                        upgradeRequest.getUsername()));
-
+        User user = getUser(upgradeRequest);
         ensureEmailsMatch(upgradeRequest, user);
 
         assignRoles(upgradeRequest.getRoles(), user);
 
         userRepository.save(user);
+    }
+
+    private User getUser(UpgradeRequest upgradeRequest) {
+        return userRepository.findByUsername(upgradeRequest.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("There is no user with username: " +
+                        upgradeRequest.getUsername()));
     }
 
     private void ensureEmailsMatch(UpgradeRequest upgradeRequest, User user) {
