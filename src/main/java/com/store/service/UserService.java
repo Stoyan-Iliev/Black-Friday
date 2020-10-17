@@ -4,6 +4,7 @@ import com.store.entity.ERole;
 import com.store.entity.Role;
 import com.store.entity.User;
 import com.store.exception.EmailMismatchException;
+import com.store.exception.RoleNotFoundException;
 import com.store.exception.UserNotFoundException;
 import com.store.payload.request.UpgradeRequest;
 import com.store.repository.RoleRepository;
@@ -46,7 +47,6 @@ public class UserService {
         }
     }
 
-
     private void assignRoles(Set<String> strRoles, User user) {
         Set<Role> roles = mapRoles(strRoles);
 
@@ -81,6 +81,6 @@ public class UserService {
 
     private Role getRole(ERole roleName) {
         return roleRepository.findByName(roleName)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
     }
 }
