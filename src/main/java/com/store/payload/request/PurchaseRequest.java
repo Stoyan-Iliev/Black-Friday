@@ -1,7 +1,5 @@
 package com.store.payload.request;
 
-import com.store.entity.BoughtProduct;
-
 import java.util.Set;
 
 public class PurchaseRequest {
