@@ -5,7 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.Min;
 @Validated
 public class BoughtProductRequest {
-
+    @Min(value = 1, message = "Id must be greater than zero")
     private long id;
 
     @Min(value = 1, message = "The count must be greater than zero")
