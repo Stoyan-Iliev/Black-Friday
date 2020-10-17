@@ -7,14 +7,17 @@ import com.store.entity.User;
 import com.store.exception.UserNotFoundException;
 import com.store.payload.request.BoughtProductRequest;
 import com.store.payload.request.PurchaseRequest;
+import com.store.payload.response.IncomeResponse;
 import com.store.repository.BoughtProductRepository;
 import com.store.repository.PurchaseRepository;
 import com.store.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -32,26 +35,27 @@ public class PurchaseService {
         this.boughtProductRepository = boughtProductRepository;
     }
 
-    public Purchase createPurchase(PurchaseRequest purchase) {
-        return purchaseRepository.save(generatePurchase(purchase));
-    }
-
-    private Purchase generatePurchase(PurchaseRequest purchaseRequest) {
+    public Purchase createPurchase(PurchaseRequest purchaseRequest) {
         Purchase purchase = new Purchase();
 
-        Set<BoughtProduct> products = new HashSet<>();
-        for (BoughtProductRequest boughtProductRequest : purchaseRequest.getBoughtProducts()) {
-            products.add(generateBoughtProduct(boughtProductRequest));
-        }
-        purchase.setProducts(new HashSet<>(boughtProductRepository.saveAll(products)));
         purchase.setPurchaseDate(LocalDate.now());
         purchase.setAddress(purchaseRequest.getAddress());
         purchase.setUser(generateUser(purchaseRequest.getUserId()));
 
+        purchase = purchaseRepository.save(purchase);
+
+        Set<BoughtProduct> products = new HashSet<>();
+        for (BoughtProductRequest boughtProductRequest : purchaseRequest.getBoughtProducts()) {
+            BoughtProduct boughtProduct = generateBoughtProduct(boughtProductRequest);
+            purchase.addProduct(boughtProduct);
+            products.add(boughtProduct);
+        }
+        boughtProductRepository.saveAll(products);
+
         return purchase;
     }
 
-    private User generateUser(long id){
+    private User generateUser(long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Kvo se opitvash da kupish kat nemash reg we"));
     }
@@ -60,5 +64,43 @@ public class PurchaseService {
         Product product = productService.getProductById(boughtProductRequest.getId());
         return new BoughtProduct(product,
                 boughtProductRequest.getCount(), product.getPrice());
+    }
+
+    public IncomeResponse getIncomeBetween(LocalDate startDate, LocalDate endDate) {
+        List<Purchase> purchases = purchaseRepository.findAllByPurchaseDateBetweenOrderByPurchaseDate(startDate, endDate);
+
+        return calculateIncome(startDate, endDate, purchases);
+    }
+
+    private IncomeResponse calculateIncome(LocalDate startDate, LocalDate endDate, List<Purchase> purchases) {
+        IncomeResponse incomeResponse = new IncomeResponse();
+
+        LocalDate currentDate = startDate;
+        int currentPurchaseIndex = 0;
+
+        while (currentDate.isBefore(endDate)){
+            BigDecimal dayIncomeSum = BigDecimal.ZERO;
+
+            while (currentPurchaseIndex < purchases.size()) {
+                if (!isPurchaseDateEqualToCurrentDate(purchases.get(currentPurchaseIndex), currentDate)) {
+                    break;
+                }
+
+                dayIncomeSum = getDayIncomeSum(purchases.get(currentPurchaseIndex), dayIncomeSum);
+                currentPurchaseIndex++;
+            }
+            incomeResponse.addDayIncome(currentDate, dayIncomeSum);
+
+            currentDate = currentDate.plusDays(1);
+        }
+        return incomeResponse;
+    }
+
+    private BigDecimal getDayIncomeSum(Purchase purchase,  BigDecimal dayIncomeSum) {
+        return dayIncomeSum.add(purchase.getTotalPrice());
+    }
+
+    private boolean isPurchaseDateEqualToCurrentDate(Purchase purchase, LocalDate currentDate) {
+        return purchase.getPurchaseDate().isEqual(currentDate);
     }
 }
