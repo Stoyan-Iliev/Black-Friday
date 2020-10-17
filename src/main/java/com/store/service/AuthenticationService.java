@@ -35,7 +35,9 @@ public class AuthenticationService {
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public AuthenticationService(UserRepository repository, PasswordEncoder encoder, RoleRepository roleRepository, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+    public AuthenticationService(UserRepository repository, PasswordEncoder encoder,
+                                 RoleRepository roleRepository, AuthenticationManager authenticationManager,
+                                 JwtUtils jwtUtils) {
         this.userRepository = repository;
         this.encoder = encoder;
         this.roleRepository = roleRepository;
@@ -67,11 +69,15 @@ public class AuthenticationService {
 
         ensureUserNotExist(user);
 
-        Role role = roleRepository.findByName(DEFAULT_ROLE)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        Role role = getDefaultRole();
         user.setRoles(new HashSet<>(Collections.singletonList(role)));
 
         userRepository.save(user);
+    }
+
+    private Role getDefaultRole() {
+        return roleRepository.findByName(DEFAULT_ROLE)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
     }
 
     private User generateUser(SignUpRequest signUpRequest) {
