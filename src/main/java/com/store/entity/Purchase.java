@@ -30,6 +30,15 @@ public class Purchase {
     private LocalDate purchaseDate;
     private String address;
 
+    public Purchase() {
+    }
+
+    public Purchase(String address, User user){
+        this.address = address;
+        this.user = user;
+        purchaseDate = LocalDate.now();
+    }
+
     public long getId() {
         return id;
     }

@@ -36,28 +36,32 @@ public class PurchaseService {
     }
 
     public Purchase createPurchase(PurchaseRequest purchaseRequest) {
-        Purchase purchase = new Purchase();
-
-        purchase.setPurchaseDate(LocalDate.now());
-        purchase.setAddress(purchaseRequest.getAddress());
-        purchase.setUser(generateUser(purchaseRequest.getUserId()));
-
+        Purchase purchase = new Purchase(purchaseRequest.getAddress(), getUser(purchaseRequest.getUserId()));
         purchase = purchaseRepository.save(purchase);
 
-        Set<BoughtProduct> products = new HashSet<>();
-        for (BoughtProductRequest boughtProductRequest : purchaseRequest.getBoughtProducts()) {
-            BoughtProduct boughtProduct = generateBoughtProduct(boughtProductRequest);
-            purchase.addProduct(boughtProduct);
-            products.add(boughtProduct);
-        }
+        Set<BoughtProduct> products = getAllBoughtProducts(purchaseRequest, purchase);
         boughtProductRepository.saveAll(products);
 
         return purchase;
     }
 
-    private User generateUser(long id) {
+    private Set<BoughtProduct> getAllBoughtProducts(PurchaseRequest purchaseRequest, Purchase purchase) {
+        Set<BoughtProduct> products = new HashSet<>();
+        for (BoughtProductRequest boughtProductRequest : purchaseRequest.getBoughtProducts()) {
+            BoughtProduct boughtProduct = generateBoughtProduct(boughtProductRequest);
+            linkPurchaseToBoughtProduct(purchase, boughtProduct);
+            products.add(boughtProduct);
+        }
+        return products;
+    }
+
+    private void linkPurchaseToBoughtProduct(Purchase purchase, BoughtProduct boughtProduct) {
+        purchase.addProduct(boughtProduct);
+    }
+
+    private User getUser(long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Kvo se opitvash da kupish kat nemash reg we"));
+                .orElseThrow(() -> new UserNotFoundException("Not found user with id: " + id));
     }
 
     private BoughtProduct generateBoughtProduct(BoughtProductRequest boughtProductRequest) {
