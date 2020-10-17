@@ -4,6 +4,7 @@ import com.store.entity.BoughtProduct;
 import com.store.entity.Product;
 import com.store.entity.Purchase;
 import com.store.entity.User;
+import com.store.exception.NotEnoughProductsException;
 import com.store.exception.UserNotFoundException;
 import com.store.payload.request.BoughtProductRequest;
 import com.store.payload.request.PurchaseRequest;
@@ -14,6 +15,7 @@ import com.store.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -35,6 +37,7 @@ public class PurchaseService {
         this.boughtProductRepository = boughtProductRepository;
     }
 
+    @Transactional
     public Purchase createPurchase(PurchaseRequest purchaseRequest) {
         Purchase purchase = new Purchase(purchaseRequest.getAddress(), getUser(purchaseRequest.getUserId()));
         purchase = purchaseRepository.save(purchase);
@@ -65,9 +68,22 @@ public class PurchaseService {
     }
 
     private BoughtProduct generateBoughtProduct(BoughtProductRequest boughtProductRequest) {
-        Product product = productService.getProductById(boughtProductRequest.getId());
+        Product product = getProduct(boughtProductRequest);
         return new BoughtProduct(product,
                 boughtProductRequest.getCount(), product.getPrice());
+    }
+
+    private Product getProduct(BoughtProductRequest boughtProductRequest) {
+        Product product = productService.getProductById(boughtProductRequest.getId());
+        ensureHaveEnoughProducts(boughtProductRequest, product);
+        product.setCount(product.getCount() - boughtProductRequest.getCount());
+        return product;
+    }
+
+    private void ensureHaveEnoughProducts(BoughtProductRequest boughtProductRequest, Product product) {
+        if(product.getCount() < boughtProductRequest.getCount()){
+            throw new NotEnoughProductsException("We currently have only " + product.getCount() + " " + product.getName());
+        }
     }
 
     public IncomeResponse getIncomeBetween(LocalDate startDate, LocalDate endDate) {
