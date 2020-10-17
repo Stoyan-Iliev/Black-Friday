@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -22,7 +23,7 @@ public class PurchaseController {
     }
 
     @PostMapping()
-    public ResponseEntity<Purchase> buyProducts(@RequestBody PurchaseRequest purchase){
+    public ResponseEntity<Purchase> buyProducts(@Valid @RequestBody PurchaseRequest purchase){
         return ResponseEntity.ok(purchaseService.createPurchase(purchase));
     }
 
