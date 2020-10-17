@@ -1,5 +1,7 @@
 package com.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -20,7 +22,8 @@ public class BoughtProduct {
     @Column
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Purchase purchase;
 
     public BoughtProduct() {
@@ -62,6 +65,18 @@ public class BoughtProduct {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public BigDecimal getTotalPrice(){
+        return price.multiply(BigDecimal.valueOf(count));
+    }
+
+    public Purchase getPurchase() {
+        return purchase;
+    }
+
+    public void setPurchase(Purchase purchase) {
+        this.purchase = purchase;
     }
 
     @Override
