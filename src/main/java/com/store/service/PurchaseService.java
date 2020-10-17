@@ -82,7 +82,7 @@ public class PurchaseService {
 
     private void ensureHaveEnoughProducts(BoughtProductRequest boughtProductRequest, Product product) {
         if(product.getCount() < boughtProductRequest.getCount()){
-            throw new NotEnoughProductsException("We currently have only " + product.getCount() + " " + product.getName());
+            throw new NotEnoughProductsException("We currently have " + product.getCount() + " " + product.getName());
         }
     }
 
