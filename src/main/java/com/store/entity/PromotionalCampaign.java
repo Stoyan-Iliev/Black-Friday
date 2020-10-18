@@ -1,6 +1,7 @@
 package com.store.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -42,7 +43,7 @@ public class PromotionalCampaign {
             joinColumns = @JoinColumn(name = "promotional_campaign_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    @JsonBackReference
+    @JsonIgnoreProperties("campaigns")
     private Set<Product> products;
 
     public PromotionalCampaign() {

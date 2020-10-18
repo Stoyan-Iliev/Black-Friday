@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -23,7 +24,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> addProducts(List<Product> products) {
+    public List<Product> addProducts(Collection<Product> products) {
         return productRepository.saveAll(products);
     }
 

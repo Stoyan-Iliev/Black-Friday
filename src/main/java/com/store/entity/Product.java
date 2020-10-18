@@ -1,7 +1,7 @@
 package com.store.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -49,7 +49,7 @@ public class Product {
     private double discountPercent;
 
     @ManyToMany(mappedBy = "products")
-    @JsonManagedReference
+    @JsonIgnoreProperties("products")
     private Set<PromotionalCampaign> campaigns;
 
     @Column

@@ -11,8 +11,13 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class PromotionalCampaignService {
@@ -37,6 +42,8 @@ public class PromotionalCampaignService {
 
         overlappingCampaigns.ifPresent(campaigns -> campaigns.forEach((campaign) ->
                 campaign.addOverlappingCampaign(newCampaign)));
+
+        scheduleStartOfCampaign(newCampaign);
 
         return newCampaign;
     }
@@ -66,7 +73,7 @@ public class PromotionalCampaignService {
     }
 
     private void ensureProductIsNotPartOfCampaign(DiscountProductRequest discountInfo, Product product) {
-        if(product.isWaitingForCampaignStart()){
+        if (product.isWaitingForCampaignStart()) {
             throw new ProductAlreadyPartOfCampaign("Product with id = " + discountInfo.getId() +
                     " is already part of campaign");
         }
@@ -75,5 +82,21 @@ public class PromotionalCampaignService {
     private PromotionalCampaign getCampaign(String campaignName) {
         return promotionalCampaignRepository.findByName(campaignName)
                 .orElseThrow(() -> new CampaignNotFoundException("No campaign with name: " + campaignName));
+    }
+
+    public void scheduleStartOfCampaign(PromotionalCampaign campaign) {
+        Duration timeToWaitUntilStart = Duration.between(LocalDateTime.now(), campaign.getCampaignStart());
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.schedule(() -> startCampaign(campaign), timeToWaitUntilStart.getSeconds(), TimeUnit.SECONDS);
+    }
+
+    private void startCampaign(PromotionalCampaign campaign) {
+        PromotionalCampaign currentCampaign = promotionalCampaignRepository.findById(campaign.getId()).get();
+        for (Product product : currentCampaign.getProducts()) {
+            product.setIsOnSale(true);
+            product.setWaitingForCampaignStart(false);
+        }
+        productService.addProducts(currentCampaign.getProducts());
     }
 }
