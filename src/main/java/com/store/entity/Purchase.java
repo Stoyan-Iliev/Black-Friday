@@ -24,13 +24,14 @@ public class Purchase {
             orphanRemoval = true
     )
     @JsonManagedReference
-    private Set<BoughtProduct> products = new HashSet<>();
+    private Set<BoughtProduct> products;
 
     private BigDecimal totalPrice = BigDecimal.ZERO;
     private LocalDate purchaseDate;
     private String address;
 
     public Purchase() {
+        products = new HashSet<>();
     }
 
     public Purchase(String address, User user){
