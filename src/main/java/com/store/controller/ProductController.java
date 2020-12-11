@@ -29,21 +29,18 @@ public class ProductController {
     }
 
     @GetMapping(path = "/products", produces = APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CLIENT', 'ADMIN')")
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.status(OK)
                 .body(productService.getAllProducts());
     }
 
     @GetMapping(path = "/products/onSale", produces = APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CLIENT', 'ADMIN')")
     public ResponseEntity<List<Product>> getAllProductsOnSale() {
         return ResponseEntity.status(OK)
                 .body(productService.getAllProductsOnSale());
     }
 
     @GetMapping(path = "/product/{id}")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CLIENT', 'ADMIN')")
     public ResponseEntity<Product> getProductById(@PathVariable("id") long id) {
         return ResponseEntity.status(OK).body(productService.getProductById(id));
     }

@@ -1,11 +1,15 @@
 package com.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity(name = "products")
 public class Product {
@@ -13,36 +17,44 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "name")
+    @Column
     @Size(max = 255, message = "Name must be at most 255 characters long")
     @NotBlank(message = "Name must not be blank")
     private String name;
 
-    @Column(name = "type")
+    @Column
     @Size(max = 255, message = "Type must be at most 255 characters long")
     @NotBlank(message = "Type must not be blank")
     private String type;
 
-    @Column(name = "count")
+    @Column
     @Min(value = 0, message = "Count must be greater or equal to zero")
     private int count;
 
-    @Column(name = "price")
+    @Column
     @NotNull(message = "Price must not be empty")
     @Min(value = 0, message = "Price must be greater than zero")
     private BigDecimal price;
 
-    @Column(name = "minPrice")
+    @Column
     @NotNull(message = "Minimal price must not be empty")
     @Min(value = 0, message = "Minimal price must be greater than zero")
     private BigDecimal minPrice;
 
-    @Column(name = "isOnSale")
+    @Column
     private boolean isOnSale;
 
-    @Column(name = "discountPercent")
+    @Column
     @Min(value = 0, message = "Discount percent must be greater or equal to zero")
     private double discountPercent;
+
+    @ManyToMany(mappedBy = "products")
+    @JsonIgnoreProperties("products")
+    private Set<PromotionalCampaign> campaigns;
+
+    @Column
+    @JsonIgnore
+    private boolean isWaitingForCampaignStart;
 
     public long getId() {
         return id;
@@ -106,5 +118,25 @@ public class Product {
 
     public void setDiscountPercent(double discountPercent) {
         this.discountPercent = discountPercent;
+    }
+
+    public Set<PromotionalCampaign> getCampaigns() {
+        return campaigns;
+    }
+
+    public void setCampaigns(Set<PromotionalCampaign> campaigns) {
+        this.campaigns = campaigns;
+    }
+
+    public void addCampaign(PromotionalCampaign campaign){
+        campaigns.add(campaign);
+    }
+
+    public boolean isWaitingForCampaignStart() {
+        return isWaitingForCampaignStart;
+    }
+
+    public void setWaitingForCampaignStart(boolean waitingForCampaignStart) {
+        isWaitingForCampaignStart = waitingForCampaignStart;
     }
 }

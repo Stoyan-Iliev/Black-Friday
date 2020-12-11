@@ -1,6 +1,5 @@
 package com.store.payload.request;
 
-import com.store.entity.Role;
 import com.store.validation.constraint.ValidEmail;
 
 import javax.validation.constraints.NotBlank;
