@@ -30,14 +30,12 @@ public class PromotionalCampaign {
 
     @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name="promotional_campaign_id")
-    @JsonBackReference
     private PromotionalCampaign campaign;
 
     @OneToMany(mappedBy = "campaign")
-    @JsonManagedReference
     private List<PromotionalCampaign> overlappingCampaigns;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "campaigns_products",
             joinColumns = @JoinColumn(name = "promotional_campaign_id"),

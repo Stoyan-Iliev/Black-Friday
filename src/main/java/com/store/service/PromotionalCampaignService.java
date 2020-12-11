@@ -13,8 +13,10 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,10 +42,12 @@ public class PromotionalCampaignService {
         PromotionalCampaign newCampaign = promotionalCampaignRepository.save(promotionalCampaign);
         overlappingCampaigns.ifPresent(newCampaign::setOverlappingCampaigns);
 
-        overlappingCampaigns.ifPresent(campaigns -> campaigns.forEach((campaign) ->
-                campaign.addOverlappingCampaign(newCampaign)));
+        overlappingCampaigns.ifPresent(campaigns -> campaigns
+                .forEach((campaign) -> campaign.addOverlappingCampaign(newCampaign)));
 
-        scheduleStartOfCampaign(newCampaign);
+        scheduleStartAndEndOfCampaign(newCampaign);
+
+        promotionalCampaignRepository.saveAndFlush(newCampaign);
 
         return newCampaign;
     }
@@ -84,19 +88,47 @@ public class PromotionalCampaignService {
                 .orElseThrow(() -> new CampaignNotFoundException("No campaign with name: " + campaignName));
     }
 
-    public void scheduleStartOfCampaign(PromotionalCampaign campaign) {
+    public void scheduleStartAndEndOfCampaign(PromotionalCampaign campaign) {
         Duration timeToWaitUntilStart = Duration.between(LocalDateTime.now(), campaign.getCampaignStart());
+        Duration timeToWaitUntilEnd = Duration.between(LocalDateTime.now(), campaign.getCampaignEnd());
 
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
         scheduler.schedule(() -> startCampaign(campaign), timeToWaitUntilStart.getSeconds(), TimeUnit.SECONDS);
+        scheduler.schedule(() -> endCampaign(campaign), timeToWaitUntilEnd.getSeconds(), TimeUnit.SECONDS);
     }
 
-    private void startCampaign(PromotionalCampaign campaign) {
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    protected void endCampaign(PromotionalCampaign campaign) {
+        Set<Product> products = new HashSet<>();
+
         PromotionalCampaign currentCampaign = promotionalCampaignRepository.findById(campaign.getId()).get();
+
         for (Product product : currentCampaign.getProducts()) {
-            product.setIsOnSale(true);
-            product.setWaitingForCampaignStart(false);
+            if(product.isOnSale()){
+                product.setIsOnSale(false);
+                products.add(product);
+            }
         }
-        productService.addProducts(currentCampaign.getProducts());
+        productService.addProducts(products);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    protected void startCampaign(PromotionalCampaign campaign) {
+        Set<Product> products = new HashSet<>();
+
+        PromotionalCampaign currentCampaign = promotionalCampaignRepository.findById(campaign.getId()).get();
+
+        for (Product product : currentCampaign.getProducts()) {
+            if(!product.isOnSale()){
+                product.setIsOnSale(true);
+                product.setWaitingForCampaignStart(false);
+                products.add(product);
+            }
+        }
+        productService.addProducts(products);
+    }
+
+    public List<PromotionalCampaign> getAllCampaigns() {
+        return promotionalCampaignRepository.findAll();
     }
 }

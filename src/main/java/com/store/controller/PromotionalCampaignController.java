@@ -5,6 +5,7 @@ import com.store.payload.request.DiscountProductRequest;
 import com.store.service.PromotionalCampaignService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,13 +23,20 @@ public class PromotionalCampaignController {
     }
 
     @PostMapping(path = "createCampaign")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<PromotionalCampaign> addPromotionalCampaign(@Valid @RequestBody PromotionalCampaign promotionalCampaign) {
         return ResponseEntity.ok(promotionalCampaignService.createPromotionalCampaign(promotionalCampaign));
     }
 
     @PutMapping(path = "addProductsToCampaign")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<PromotionalCampaign> addProductsToCampaign(@RequestParam String name,
                                                                      @Valid @RequestBody List<DiscountProductRequest> discountInfo) {
         return ResponseEntity.ok(promotionalCampaignService.addProductsToCampaign(name, discountInfo));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PromotionalCampaign>> getAllCampaigns(){
+        return ResponseEntity.ok(promotionalCampaignService.getAllCampaigns());
     }
 }

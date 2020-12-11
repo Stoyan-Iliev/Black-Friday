@@ -67,14 +67,14 @@ public class ProductService {
     }
 
     private BigDecimal ensurePriceIsNotBelowMinPrice(Product product, BigDecimal newPrice) {
-        if (isNewPricePriceLessThanMinPrice(newPrice, product.getMinPrice())) {
+        if (isFirstLessThanSecond(newPrice, product.getMinPrice())) {
             newPrice = product.getMinPrice();
         }
         return newPrice;
     }
 
-    private boolean isNewPricePriceLessThanMinPrice(BigDecimal first, BigDecimal second) {
-        return second.compareTo(first) < 0;
+    private boolean isFirstLessThanSecond(BigDecimal first, BigDecimal second) {
+        return first.compareTo(second) < 0;
     }
 
     private BigDecimal calculatePriceWithDiscount(Product product) {
