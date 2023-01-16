@@ -38,6 +38,7 @@ public class Purchase {
         this.address = address;
         this.user = user;
         purchaseDate = LocalDate.now();
+        products = new HashSet<>();
     }
 
     public long getId() {

@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> getAllByIsOnSaleIsTrue();
-    List<Product> getAllByCountGreaterThan(int count);
+    List<Product> getAllByCountGreaterThanOrderByType(int count);
+
 }

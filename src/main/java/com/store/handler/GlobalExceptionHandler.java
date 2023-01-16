@@ -1,7 +1,6 @@
 package com.store.handler;
 
-import com.store.exception.ProductNotFoundException;
-import com.store.exception.UserAlreadyExistException;
+import com.store.exception.*;
 import com.store.util.ApiError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import java.io.IOException;
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.*;
@@ -29,14 +29,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(getApiError(message, BAD_REQUEST));
     }
 
-    @ExceptionHandler(value = ProductNotFoundException.class)
-    public ResponseEntity<?> noSuchElementExceptionHandler(ProductNotFoundException exception){
-        LOGGER.error(exception);
-        return ResponseEntity.status(BAD_REQUEST).body(getApiError(exception.getMessage(), BAD_REQUEST));
-    }
-
-    @ExceptionHandler(value = UserAlreadyExistException.class)
-    public ResponseEntity<?> userAlreadyExistExceptionHandler(UserAlreadyExistException exception){
+    @ExceptionHandler(value = {
+            CampaignNotFoundException.class,
+            EmailMismatchException.class,
+            NotEnoughProductsException.class,
+            ProductAlreadyPartOfCampaign.class,
+            ProductNotFoundException.class,
+            RoleNotFoundException.class,
+            UserAlreadyExistException.class,
+            UserNotFoundException.class,
+            IOException.class
+            })
+    public ResponseEntity<?> handleBadRequest(Exception exception){
         LOGGER.error(exception);
         return ResponseEntity.status(BAD_REQUEST).body(getApiError(exception.getMessage(), BAD_REQUEST));
     }
@@ -54,6 +58,6 @@ public class GlobalExceptionHandler {
     }
 
     private ApiError getApiError(String message, HttpStatus status) {
-        return new ApiError(status, "validation", message);
+        return new ApiError(status, message);
     }
 }

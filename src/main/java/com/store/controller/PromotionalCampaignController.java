@@ -22,20 +22,20 @@ public class PromotionalCampaignController {
         this.promotionalCampaignService = promotionalCampaignService;
     }
 
-    @PostMapping(path = "createCampaign")
+    @PostMapping(path = "/createCampaign")
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<PromotionalCampaign> addPromotionalCampaign(@Valid @RequestBody PromotionalCampaign promotionalCampaign) {
         return ResponseEntity.ok(promotionalCampaignService.createPromotionalCampaign(promotionalCampaign));
     }
 
-    @PutMapping(path = "addProductsToCampaign")
+    @PutMapping(path = "/addProductsToCampaign")
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
     public ResponseEntity<PromotionalCampaign> addProductsToCampaign(@RequestParam String name,
                                                                      @Valid @RequestBody List<DiscountProductRequest> discountInfo) {
         return ResponseEntity.ok(promotionalCampaignService.addProductsToCampaign(name, discountInfo));
     }
 
-    @GetMapping
+    @GetMapping(path = "/campaigns")
     public ResponseEntity<List<PromotionalCampaign>> getAllCampaigns(){
         return ResponseEntity.ok(promotionalCampaignService.getAllCampaigns());
     }

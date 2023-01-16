@@ -1,29 +1,34 @@
 package com.store.service;
 
 import com.store.entity.ERole;
+import com.store.entity.Purchase;
 import com.store.entity.Role;
 import com.store.entity.User;
 import com.store.exception.EmailMismatchException;
 import com.store.exception.RoleNotFoundException;
 import com.store.exception.UserNotFoundException;
 import com.store.payload.request.UpgradeRequest;
+import com.store.repository.PurchaseRepository;
 import com.store.repository.RoleRepository;
 import com.store.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PurchaseRepository purchaseRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PurchaseRepository purchaseRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.purchaseRepository = purchaseRepository;
     }
 
     public void upgradeUser(UpgradeRequest upgradeRequest) {
@@ -36,9 +41,13 @@ public class UserService {
     }
 
     private User getUser(UpgradeRequest upgradeRequest) {
-        return userRepository.findByUsername(upgradeRequest.getUsername())
+        return getUserByUsername(upgradeRequest.getUsername());
+    }
+
+    private User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("There is no user with username: " +
-                        upgradeRequest.getUsername()));
+                        username));
     }
 
     private void ensureEmailsMatch(UpgradeRequest upgradeRequest, User user) {
@@ -82,5 +91,13 @@ public class UserService {
     private Role getRole(ERole roleName) {
         return roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
+    }
+
+    public void deleteUser(String username) {
+        User user = getUserByUsername(username);
+        List<Purchase> purchases = purchaseRepository.findAllByUser(user);
+        purchases.forEach(purchase -> purchase.setUser(null));
+        purchaseRepository.saveAll(purchases);
+        userRepository.deleteById(user.getId());
     }
 }

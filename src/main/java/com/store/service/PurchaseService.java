@@ -13,6 +13,7 @@ import com.store.repository.BoughtProductRepository;
 import com.store.repository.PurchaseRepository;
 import com.store.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,13 +29,16 @@ public class PurchaseService {
     private final ProductService productService;
     private final UserRepository userRepository;
     private final BoughtProductRepository boughtProductRepository;
-
+    private final EmailService emailService;
+    private final SimpleMailMessage template;
     @Autowired
-    public PurchaseService(PurchaseRepository purchaseRepository, ProductService productService, UserRepository userRepository, BoughtProductRepository boughtProductRepository) {
+    public PurchaseService(PurchaseRepository purchaseRepository, ProductService productService, UserRepository userRepository, BoughtProductRepository boughtProductRepository, EmailService emailService, SimpleMailMessage template) {
         this.purchaseRepository = purchaseRepository;
         this.productService = productService;
         this.userRepository = userRepository;
         this.boughtProductRepository = boughtProductRepository;
+        this.emailService = emailService;
+        this.template = template;
     }
 
     @Transactional
@@ -44,6 +48,11 @@ public class PurchaseService {
 
         Set<BoughtProduct> products = getAllBoughtProducts(purchaseRequest, purchase);
         boughtProductRepository.saveAll(products);
+
+        User user = purchase.getUser();
+        String text = String.format(template.getText(), user.getFirstName(),
+                purchase.getTotalPrice(), purchase.getAddress());
+        emailService.sendSimpleMessage(user.getEmail(), "Purchase Finished", text);
 
         return purchase;
     }

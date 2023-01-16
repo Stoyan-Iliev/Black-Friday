@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.persistence.ElementCollection;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "products")
@@ -17,15 +19,32 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
+    @Column(unique = true)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String productCode;
+
+    @Column(unique = true)
     @Size(max = 255, message = "Name must be at most 255 characters long")
     @NotBlank(message = "Name must not be blank")
     private String name;
+
+    @Column()
+    @Size(max = 255, message = "Brand must be at most 255 characters long")
+    @NotBlank(message = "Brand must not be blank")
+    private String Brand;
+
+    @Column()
+    @Size(max = 255, message = "Model must be at most 255 characters long")
+    @NotBlank(message = "Model must not be blank")
+    private String Model;
 
     @Column
     @Size(max = 255, message = "Type must be at most 255 characters long")
     @NotBlank(message = "Type must not be blank")
     private String type;
+    @Column
+    @Lob
+    private String description;
 
     @Column
     @Min(value = 0, message = "Count must be greater or equal to zero")
@@ -51,10 +70,18 @@ public class Product {
     @ManyToMany(mappedBy = "products")
     @JsonIgnoreProperties("products")
     private Set<PromotionalCampaign> campaigns;
+    @ElementCollection
+    @Column(name = "image_urls", length = 10000)
+    private Set<String> imageUrls;
 
     @Column
     @JsonIgnore
     private boolean isWaitingForCampaignStart;
+
+    public Product() {
+        this.campaigns = new HashSet<>();
+        this.imageUrls = new HashSet<>();
+    }
 
     public long getId() {
         return id;
@@ -138,5 +165,49 @@ public class Product {
 
     public void setWaitingForCampaignStart(boolean waitingForCampaignStart) {
         isWaitingForCampaignStart = waitingForCampaignStart;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(Set<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
+    public String getBrand() {
+        return Brand;
+    }
+
+    public void setBrand(String brand) {
+        Brand = brand;
+    }
+
+    public String getModel() {
+        return Model;
+    }
+
+    public void setModel(String model) {
+        Model = model;
+    }
+
+    public void setOnSale(boolean onSale) {
+        isOnSale = onSale;
     }
 }

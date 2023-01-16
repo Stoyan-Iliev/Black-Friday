@@ -5,23 +5,75 @@ import com.store.exception.ProductNotFoundException;
 import com.store.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ProductService {
 
+    private Set<String> lastUploadedImageUrls = new HashSet<>();
+
     private final ProductRepository productRepository;
+    private final ImageUploaderService imageUploaderService;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ImageUploaderService imageUploaderService) {
         this.productRepository = productRepository;
+        this.imageUploaderService = imageUploaderService;
     }
 
-    public Product addProduct(Product product) {
-        return productRepository.save(product);
+    public Product addProduct(Product product, Collection<MultipartFile> images) {
+        Product savedProduct = productRepository.save(product);
+        return tryToSaveProduct(images, savedProduct);
+    }
+
+    private Product tryToSaveProduct(Collection<MultipartFile> images, Product product) {
+        try {
+            Collection<MultipartFile> imagesToRemove = findImagesToBeRemoved(images, product.getImageUrls());
+            images.removeAll(imagesToRemove);
+            return productRepository.save(uploadImages(images, product));
+        } catch (Exception exception) {
+            imageUploaderService.deleteImagesForProduct(lastUploadedImageUrls);
+            throw exception;
+        }
+    }
+
+    private Collection<MultipartFile> findImagesToBeRemoved(Collection<MultipartFile> images,
+                                                            Set<String> existingImageUrls) {
+        Collection<MultipartFile> imagesToRemove = new HashSet<>();
+        if (!isEmpty(images)) {
+            for (String url : existingImageUrls) {
+                for (MultipartFile image : images) {
+                    String imageName = nonNull(image.getOriginalFilename())
+                            ? image.getOriginalFilename()
+                            : EMPTY;
+                    if (url.contains(imageName)) {
+                        imagesToRemove.add(image);
+                        break;
+                    }
+                }
+            }
+        }
+        return imagesToRemove;
+    }
+
+    private Product uploadImages(Collection<MultipartFile> images, Product product) {
+        if (!isEmpty(images)) {
+            lastUploadedImageUrls = imageUploaderService.upload(images, product.getName());
+            Set<String> existingImageUrls = product.getImageUrls();
+            existingImageUrls.addAll(lastUploadedImageUrls);
+            product.setImageUrls(existingImageUrls);
+        }
+        return product;
     }
 
     public List<Product> addProducts(Collection<Product> products) {
@@ -29,7 +81,7 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() {
-        List<Product> products = productRepository.getAllByCountGreaterThan(0);
+        List<Product> products = productRepository.getAllByCountGreaterThanOrderByType(0);
         setDiscountPriceForAllProductsOnSale(products);
         return products;
     }
