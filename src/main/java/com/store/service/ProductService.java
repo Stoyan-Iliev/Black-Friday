@@ -12,10 +12,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -80,10 +77,17 @@ public class ProductService {
         return productRepository.saveAll(products);
     }
 
-    public List<Product> getAllProducts() {
+    public Map<String, List<Product>> getAllProducts() {
         List<Product> products = productRepository.getAllByCountGreaterThanOrderByType(0);
         setDiscountPriceForAllProductsOnSale(products);
-        return products;
+        Map<String, List<Product>> filteredProducts = new TreeMap<>();
+        products.forEach(p -> {
+            if (filteredProducts.containsKey(p.getType())) {
+                filteredProducts.put(p.getType(), new ArrayList<>());
+            }
+            filteredProducts.get(p.getType()).add(p);
+        });
+        return filteredProducts;
     }
 
     public List<Product> getAllProductsOnSale() {

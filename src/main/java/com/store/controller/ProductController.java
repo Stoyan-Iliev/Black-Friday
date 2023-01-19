@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -30,7 +31,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/products", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<Map<String, List<Product>>> getAllProducts() {
         return ResponseEntity.status(OK)
                 .body(productService.getAllProducts());
     }
