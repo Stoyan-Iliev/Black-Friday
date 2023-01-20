@@ -62,7 +62,7 @@ public class SignUpRequest {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.trim();
     }
 
     public String getEmail() {
@@ -70,7 +70,7 @@ public class SignUpRequest {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.trim();
     }
 
     public Set<String> getRoles() {
@@ -86,6 +86,6 @@ public class SignUpRequest {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 }
