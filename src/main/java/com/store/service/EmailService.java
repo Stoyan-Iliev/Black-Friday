@@ -45,7 +45,7 @@ public class EmailService {
         helper.setSubject(subject);
 
         content = content.replace("[[name]]", user.getFirstName() + " " +user.getLastName());
-        String verifyURL = siteURL + "/blackFriday/api/user/verify?code=" + user.getVerificationCode();
+        String verifyURL = "https://localhost:3000/verify?code=" + user.getVerificationCode();
 
         content = content.replace("[[URL]]", verifyURL);
 
