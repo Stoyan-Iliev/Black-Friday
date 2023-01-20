@@ -11,5 +11,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> getAllByIsOnSaleIsTrue();
     List<Product> getAllByCountGreaterThanOrderByType(int count);
     List<Product> getAllByCountGreaterThanAndType(int count, String type);
-
+    List<Product> getAllByCountGreaterThanAndCampaigns_idOrderByType(int count, long campaignId);
 }

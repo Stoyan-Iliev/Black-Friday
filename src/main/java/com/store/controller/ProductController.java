@@ -48,6 +48,12 @@ public class ProductController {
                 .body(productService.getAllProductsOnSale());
     }
 
+    @GetMapping(path = "/products/campaign/{campaign_id}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, List<Product>>> getAllProductsOnSale(@PathVariable("campaign_id") long campaign_id) {
+        return ResponseEntity.status(OK)
+                .body(productService.getAllProductsByCampaignId(campaign_id));
+    }
+
     @GetMapping(path = "/product/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable("id") long id) {
         return ResponseEntity.status(OK).body(productService.getProductById(id));

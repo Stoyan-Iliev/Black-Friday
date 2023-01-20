@@ -79,6 +79,10 @@ public class ProductService {
 
     public Map<String, List<Product>> getAllProducts() {
         List<Product> products = productRepository.getAllByCountGreaterThanOrderByType(0);
+        return filterProducts(products);
+    }
+
+    private Map<String, List<Product>> filterProducts(List<Product> products) {
         setDiscountPriceForAllProductsOnSale(products);
         Map<String, List<Product>> filteredProducts = new TreeMap<>();
         products.forEach(p -> {
@@ -88,6 +92,11 @@ public class ProductService {
             filteredProducts.get(p.getType()).add(p);
         });
         return filteredProducts;
+    }
+
+    public Map<String, List<Product>> getAllProductsByCampaignId(long campaignId) {
+        List<Product> products = productRepository.getAllByCountGreaterThanAndCampaigns_idOrderByType(0, campaignId);
+        return filterProducts(products);
     }
 
     public List<Product> getAllProductsByType(String type) {
