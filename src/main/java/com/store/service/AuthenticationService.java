@@ -72,7 +72,9 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void registerNewUserAccount(SignUpRequest signUpRequest, String siteURL) throws MessagingException, UnsupportedEncodingException {
+    public void registerNewUserAccount(SignUpRequest signUpRequest, String siteURL)
+            throws MessagingException, UnsupportedEncodingException,
+                UserAlreadyExistException {
         User user = generateUser(signUpRequest);
 
         ensureUserNotExist(user);
@@ -102,7 +104,7 @@ public class AuthenticationService {
                 signUpRequest.getEmail());
     }
 
-    private void ensureUserNotExist(User user) {
+    private void ensureUserNotExist(User user) throws UserAlreadyExistException {
         if (emailExist(user.getEmail())) {
             throw new UserAlreadyExistException("There is an account with that email address: " +
                     user.getEmail());
