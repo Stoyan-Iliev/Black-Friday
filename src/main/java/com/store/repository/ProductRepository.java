@@ -10,5 +10,6 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> getAllByIsOnSaleIsTrue();
     List<Product> getAllByCountGreaterThanOrderByType(int count);
+    List<Product> getAllByCountGreaterThanAndType(int count, String type);
 
 }

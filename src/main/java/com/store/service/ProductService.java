@@ -82,7 +82,7 @@ public class ProductService {
         setDiscountPriceForAllProductsOnSale(products);
         Map<String, List<Product>> filteredProducts = new TreeMap<>();
         products.forEach(p -> {
-            if (filteredProducts.containsKey(p.getType())) {
+            if (!filteredProducts.containsKey(p.getType())) {
                 filteredProducts.put(p.getType(), new ArrayList<>());
             }
             filteredProducts.get(p.getType()).add(p);
@@ -90,6 +90,11 @@ public class ProductService {
         return filteredProducts;
     }
 
+    public List<Product> getAllProductsByType(String type) {
+        List<Product> products = productRepository.getAllByCountGreaterThanAndType(0, type);
+        setDiscountPriceForAllProductsOnSale(products);
+        return products;
+    }
     public List<Product> getAllProductsOnSale() {
         List<Product> products = productRepository.getAllByIsOnSaleIsTrue();
         setDiscountPriceForAllProductsOnSale(products);

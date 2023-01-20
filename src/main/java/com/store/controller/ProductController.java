@@ -36,6 +36,12 @@ public class ProductController {
                 .body(productService.getAllProducts());
     }
 
+    @GetMapping(path = "/products/{type}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Product>> getAllProductsOnSale(@PathVariable("type") String type) {
+        return ResponseEntity.status(OK)
+                .body(productService.getAllProductsByType(type));
+    }
+
     @GetMapping(path = "/products/onSale", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Product>> getAllProductsOnSale() {
         return ResponseEntity.status(OK)
