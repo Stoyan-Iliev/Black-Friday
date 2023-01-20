@@ -44,7 +44,8 @@ public class GlobalExceptionHandler {
             MessagingException.class,
             UnsupportedEncodingException.class,
             DisabledException.class,
-            BadCredentialsException.class
+            BadCredentialsException.class,
+            CampaignStartDateAfterEndDateException.class
     })
     public ResponseEntity<?> handleBadRequest(Exception exception){
         LOGGER.error(exception);

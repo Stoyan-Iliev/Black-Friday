@@ -3,6 +3,7 @@ package com.store.service;
 import com.store.entity.Product;
 import com.store.entity.PromotionalCampaign;
 import com.store.exception.CampaignNotFoundException;
+import com.store.exception.CampaignStartDateAfterEndDateException;
 import com.store.exception.ProductAlreadyPartOfCampaign;
 import com.store.payload.request.DiscountProductRequest;
 import com.store.repository.PromotionalCampaignRepository;
@@ -35,6 +36,9 @@ public class PromotionalCampaignService {
 
     @Transactional
     public PromotionalCampaign createPromotionalCampaign(PromotionalCampaign promotionalCampaign) {
+        if (promotionalCampaign.getCampaignStart().isAfter(promotionalCampaign.getCampaignEnd())) {
+            throw new CampaignStartDateAfterEndDateException("Campaign Start Date must be after the End Date");
+        }
         Optional<List<PromotionalCampaign>> overlappingCampaigns = promotionalCampaignRepository
                 .findAllByCampaignStartBetweenOrCampaignEndBetween(promotionalCampaign.getCampaignStart(),
                         promotionalCampaign.getCampaignEnd());
