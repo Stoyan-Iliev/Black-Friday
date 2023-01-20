@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -30,9 +33,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        authenticationService.registerNewUserAccount(signUpRequest);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest,
+                                          HttpServletRequest request)
+            throws MessagingException, UnsupportedEncodingException {
+        authenticationService.registerNewUserAccount(signUpRequest, getSiteURL(request));
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    private String getSiteURL(HttpServletRequest request) {
+        String siteURL = request.getRequestURL().toString();
+        return siteURL.replace(request.getServletPath(), "");
     }
 }

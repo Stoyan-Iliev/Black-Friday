@@ -6,14 +6,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.mail.MessagingException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.*;
@@ -40,8 +44,12 @@ public class GlobalExceptionHandler {
             UserAlreadyExistException.class,
             UserNotFoundException.class,
             IOException.class,
-            MethodArgumentNotValidException.class
-            })
+            MethodArgumentNotValidException.class,
+            MessagingException.class,
+            UnsupportedEncodingException.class,
+            DisabledException.class,
+            BadCredentialsException.class
+    })
     public ResponseEntity<?> handleBadRequest(Exception exception){
         LOGGER.error(exception);
         return ResponseEntity.status(BAD_REQUEST).body(getApiError(exception.getMessage(), BAD_REQUEST));

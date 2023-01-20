@@ -50,6 +50,20 @@ public class UserService {
                         username));
     }
 
+    public boolean verify(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode);
+
+        if (user == null || user.isEnabled()) {
+            return false;
+        } else {
+            user.setVerificationCode(null);
+            user.setEnabled(true);
+            userRepository.save(user);
+
+            return true;
+        }
+    }
+
     private void ensureEmailsMatch(UpgradeRequest upgradeRequest, User user) {
         if(!user.getEmail().equals(upgradeRequest.getEmail())){
             throw new EmailMismatchException("Wrong username or email");

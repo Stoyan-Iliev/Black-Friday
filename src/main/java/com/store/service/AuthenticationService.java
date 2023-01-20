@@ -11,6 +11,7 @@ import com.store.repository.RoleRepository;
 import com.store.repository.UserRepository;
 import com.store.security.jwt.JwtUtils;
 import com.store.security.services.UserDetailsImpl;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.transaction.Transactional;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,15 +38,18 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
+    private final EmailService emailService;
+
     @Autowired
     public AuthenticationService(UserRepository repository, PasswordEncoder encoder,
                                  RoleRepository roleRepository, AuthenticationManager authenticationManager,
-                                 JwtUtils jwtUtils) {
+                                 JwtUtils jwtUtils, EmailService emailService) {
         this.userRepository = repository;
         this.encoder = encoder;
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
+        this.emailService = emailService;
     }
 
     public JwtResponse authenticateUser(LoginRequest loginRequest) {
@@ -64,7 +71,8 @@ public class AuthenticationService {
                 roles);
     }
 
-    public void registerNewUserAccount(SignUpRequest signUpRequest) {
+    @Transactional
+    public void registerNewUserAccount(SignUpRequest signUpRequest, String siteURL) throws MessagingException, UnsupportedEncodingException {
         User user = generateUser(signUpRequest);
 
         ensureUserNotExist(user);
@@ -72,7 +80,13 @@ public class AuthenticationService {
         Role role = getDefaultRole();
         user.setRoles(new HashSet<>(Collections.singletonList(role)));
 
+        String randomCode = RandomString.make(64);
+        user.setVerificationCode(randomCode);
+        user.setEnabled(false);
+
         userRepository.save(user);
+
+        emailService.sendVerificationEmail(user, siteURL);
     }
 
     private Role getDefaultRole() {

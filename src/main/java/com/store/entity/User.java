@@ -30,6 +30,12 @@ public class User {
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    @Column(name = "verification_code", length = 64)
+    private String verificationCode;
+
+    @Column
+    private boolean enabled;
+
     public User() {
     }
 
@@ -95,5 +101,21 @@ public class User {
 
     public void setRoles(Set<Role> role) {
         this.roles = role;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
